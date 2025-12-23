@@ -2,6 +2,7 @@
 # Copyright (c) 2025 flask-lab contributors
 
 from flask import request, jsonify
+from sqlalchemy import select
 from flask_lab.models import Todo
 
 
@@ -10,7 +11,7 @@ class TodoView:
         self.db = db
 
     def list_todos(self):
-        todos = Todo.query.all()
+        todos = self.db.session.execute(select(Todo)).scalars().all()
         return jsonify([todo.to_dict() for todo in todos])
 
     def get_todo(self, todo_id):
