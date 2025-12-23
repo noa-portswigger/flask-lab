@@ -8,10 +8,5 @@ dependencies = [
     "gunicorn>=23.0.0",
 ]
 
-[project.optional-dependencies]
-dev = [
-    "pytest>=8.0.0",
-]
-
 [tool.uv]
 package = true
