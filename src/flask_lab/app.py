@@ -7,30 +7,31 @@ from flask_lab.models import db
 from flask_lab.todo_view import TodoView
 
 
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///todos.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+def create_app():
+    app = Flask(__name__)
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///todos.db'
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-db.init_app(app)
+    db.init_app(app)
 
-with app.app_context():
-    db.create_all()
+    with app.app_context():
+        db.create_all()
 
+    @app.route("/")
+    def hello():
+        return {"message": "Hello from Flask!"}
 
-@app.route("/")
-def hello():
-    return {"message": "Hello from Flask!"}
+    # Initialize TodoView with db dependency
+    todo_view = TodoView(db)
 
+    # Register todo routes
+    app.add_url_rule('/todos', view_func=todo_view.list_todos, methods=['GET'])
+    app.add_url_rule('/todos/<int:todo_id>', view_func=todo_view.get_todo, methods=['GET'])
+    app.add_url_rule('/todos', view_func=todo_view.create_todo, methods=['POST'])
+    app.add_url_rule('/todos/<int:todo_id>', view_func=todo_view.update_todo, methods=['PUT'])
+    app.add_url_rule('/todos/<int:todo_id>', view_func=todo_view.delete_todo, methods=['DELETE'])
 
-# Initialize TodoView with db dependency
-todo_view = TodoView(db)
-
-# Register todo routes
-app.add_url_rule('/todos', view_func=todo_view.list_todos, methods=['GET'])
-app.add_url_rule('/todos/<int:todo_id>', view_func=todo_view.get_todo, methods=['GET'])
-app.add_url_rule('/todos', view_func=todo_view.create_todo, methods=['POST'])
-app.add_url_rule('/todos/<int:todo_id>', view_func=todo_view.update_todo, methods=['PUT'])
-app.add_url_rule('/todos/<int:todo_id>', view_func=todo_view.delete_todo, methods=['DELETE'])
+    return app
 
 
 class StandaloneApplication(gunicorn.app.base.BaseApplication):
@@ -50,6 +51,7 @@ class StandaloneApplication(gunicorn.app.base.BaseApplication):
 
 
 def main():
+    app = create_app()
     options = {
         'bind': '0.0.0.0:8080',
         'workers': 4,
