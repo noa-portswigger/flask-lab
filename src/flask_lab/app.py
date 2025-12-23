@@ -2,8 +2,9 @@
 # Copyright (c) 2025 flask-lab contributors
 
 from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
 import gunicorn.app.base
-from flask_lab.models import db
+from flask_lab.models import Base
 from flask_lab.todo_view import TodoView
 
 
@@ -12,6 +13,7 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///todos.db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+    db = SQLAlchemy(model_class=Base)
     db.init_app(app)
 
     with app.app_context():
