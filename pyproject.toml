@@ -6,11 +6,12 @@ license = "MIT"
 requires-python = ">=3.11"
 dependencies = [
     "flask>=3.0.0",
+    "flask-sqlalchemy>=3.1.0",
     "gunicorn>=23.0.0",
 ]
 
 [project.scripts]
-flask-lab = "flask_lab:main"
+flask-lab = "flask_lab.app:main"
 
 [tool.uv]
 package = true
