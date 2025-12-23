@@ -9,5 +9,8 @@ dependencies = [
     "gunicorn>=23.0.0",
 ]
 
+[project.scripts]
+flask-lab = "flask_lab:main"
+
 [tool.uv]
 package = true

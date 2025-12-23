@@ -39,5 +39,5 @@ WORKDIR /app
 # Expose port
 EXPOSE 8080
 
-# Run gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:8080", "flask_lab:app"]
+# Run application
+CMD ["flask-lab"]
