@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2025 flask-lab contributors
+
 # Build stage
 FROM dhi.io/python:3.14.2-alpine3.22-fips-dev@sha256:cfd9d7a5c6039118e31e1334c5085cd43aea057a7cfec3ed6eaaafddb84c9bd6 AS builder
 
