@@ -10,7 +10,7 @@ from flask_lab.todo_view import TodoView
 
 def create_app():
     app = Flask(__name__)
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///todos.db'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/todo.db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     db = SQLAlchemy(model_class=Base)
