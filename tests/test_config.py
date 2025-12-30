@@ -3,8 +3,10 @@
 
 import tempfile
 from pathlib import Path
+
 import pytest
-from flask_lab.config import load_config, Config, SqliteConfig, RdsConfig, DatabaseConfig
+
+from flask_lab.config import Config, DatabaseConfig, RdsConfig, SqliteConfig, load_config
 
 
 def test_load_config_missing_file():

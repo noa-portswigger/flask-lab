@@ -3,10 +3,12 @@
 
 import logging
 from typing import NoReturn
+
 import boto3
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import event, Engine
+from sqlalchemy import event
+
 from flask_lab.config import Config, RdsConfig
 from flask_lab.models import Base
 
@@ -73,10 +75,9 @@ def init_sqlite(app: Flask, config: Config) -> SQLAlchemy:
 
 def init_rds(app: Flask, config: Config) -> SQLAlchemy:
     db_uri = build_uri(config)
-    post_init_hook = lambda engine: setup_iam_token_refresh(engine, config)
     db = _init_sqlalchemy(app, db_uri)
     with app.app_context():
-        post_init_hook(db.engine)
+        setup_iam_token_refresh(db.engine, config)
     return db
 
 

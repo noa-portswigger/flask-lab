@@ -3,12 +3,13 @@
 
 import logging
 import os
-from typing import Optional
-from flask import Flask
+
 import gunicorn.app.base
+from flask import Flask
+
+from flask_lab import db
 from flask_lab.config import load_config
 from flask_lab.todo_view import TodoView
-from flask_lab import db
 
 logger = logging.getLogger(__name__)
 
@@ -39,7 +40,7 @@ def create_app() -> Flask:
 
 
 class StandaloneApplication(gunicorn.app.base.BaseApplication):
-    def __init__(self, app: Flask, options: Optional[dict[str, str]] = None) -> None:
+    def __init__(self, app: Flask, options: dict[str, str] | None = None) -> None:
         self.options = options or {}
         self.application = app
         super().__init__()

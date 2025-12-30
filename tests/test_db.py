@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: MIT
 # Copyright (c) 2025 flask-lab contributors
 
+from flask_lab.config import Config, DatabaseConfig, RdsConfig, SqliteConfig
 from flask_lab.db import build_uri
-from flask_lab.config import Config, DatabaseConfig, SqliteConfig, RdsConfig
 
 
 def test_build_uri_basic():

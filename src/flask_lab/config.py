@@ -5,7 +5,6 @@ import logging
 import tomllib
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Optional
 
 logger = logging.getLogger(__name__)
 
@@ -22,7 +21,7 @@ class RdsConfig:
     name: str
     user: str
     region: str
-    hostname_override: Optional[str] = None
+    hostname_override: str | None = None
 
 
 @dataclass
