@@ -15,7 +15,7 @@ COPY pyproject.toml uv.lock ./
 # Interestingly, uv build and uv install will look at VIRTUAL_ENV but not uv venv
 ENV VIRTUAL_ENV=/venv
 # Install dependencies in a separate layer (cached when lock file unchanged)
-RUN uv venv /venv && uv sync --frozen --no-install-project
+RUN uv venv /venv && uv sync --frozen --no-install-project --no-dev
 
 # Copy source code (changes frequently)
 COPY . ./
