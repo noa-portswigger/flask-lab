@@ -6,6 +6,7 @@ import os
 
 import gunicorn.app.base
 from flask import Flask
+from gunicorn.config import Config
 
 from flask_lab import db
 from flask_lab.config import load_config
@@ -47,8 +48,8 @@ class StandaloneApplication(gunicorn.app.base.BaseApplication):
 
     def load_config(self) -> None:
         for key, value in self.options.items():
-            # gunicorn guarantees cfg exists after super().__init__(), but type checker can't infer this
-            self.cfg.set(key, value)  # type: ignore[union-attr]
+            assert isinstance(self.cfg, Config)
+            self.cfg.set(key, value)
 
     def load(self) -> Flask:
         return self.application
