@@ -19,6 +19,7 @@ flask-lab = "flask_lab.app:main"
 dev = [
     "pytest>=8.0.0",
     "ruff>=0.8.0",
+    "ty",
 ]
 
 [tool.uv]
