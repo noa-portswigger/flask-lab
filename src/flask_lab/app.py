@@ -40,14 +40,14 @@ def create_app() -> Flask:
 
 
 class StandaloneApplication(gunicorn.app.base.BaseApplication):
-    def __init__(self, app: Flask, options: dict[str, str] | None = None) -> None:
-        self.options = options or {}
+    def __init__(self, app: Flask, options: dict[str, str | int]) -> None:
+        self.options = options
         self.application = app
         super().__init__()
 
     def load_config(self) -> None:
         for key, value in self.options.items():
-            self.cfg.set(key, value)
+            self.cfg.set(key, value)  # type: ignore[union-attr]
 
     def load(self) -> Flask:
         return self.application

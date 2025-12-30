@@ -27,13 +27,13 @@ class RdsConfig:
 @dataclass
 class DatabaseConfig:
     type: str
-    sqlite: SqliteConfig = field(default_factory=SqliteConfig)
-    rds: RdsConfig = field(default_factory=RdsConfig)
+    sqlite: SqliteConfig | None = None
+    rds: RdsConfig | None = None
 
 
 @dataclass
 class Config:
-    database: DatabaseConfig = field(default_factory=DatabaseConfig)
+    database: DatabaseConfig = field(default_factory=lambda: DatabaseConfig(type='sqlite'))
 
 
 def load_config(config_path: str) -> Config:
@@ -55,15 +55,16 @@ def load_config(config_path: str) -> Config:
             f"Invalid database type: '{db_type}'. Must be either 'sqlite' or 'rds'"
         )
 
-    # Parse sqlite config
-    sqlite_data = db_data.get('sqlite', {})
-    sqlite_config = SqliteConfig(
-        uri=sqlite_data.get('uri', 'sqlite:////tmp/todo.db')
-    )
-
-    # Parse rds config - require fields when type is 'rds'
-    rds_data = db_data.get('rds', {})
-    if db_type == 'rds':
+    # Parse sqlite config if type is sqlite
+    if db_type == 'sqlite':
+        sqlite_data = db_data.get('sqlite', {})
+        sqlite_config = SqliteConfig(
+            uri=sqlite_data.get('uri', 'sqlite:////tmp/todo.db')
+        )
+        rds_config = None
+    else:
+        # Parse rds config - require fields when type is 'rds'
+        rds_data = db_data.get('rds', {})
         required_fields = ['host', 'port', 'name', 'user', 'region']
         missing_fields = [f for f in required_fields if f not in rds_data]
         if missing_fields:
@@ -79,11 +80,7 @@ def load_config(config_path: str) -> Config:
             region=rds_data['region'],
             hostname_override=rds_data.get('hostname_override')
         )
-    else:
-        # For sqlite, use default RdsConfig (won't be used)
-        rds_config = RdsConfig(
-            host='', port=5432, name='', user='', region='us-east-1'
-        )
+        sqlite_config = None
 
     database_config = DatabaseConfig(
         type=db_type,
