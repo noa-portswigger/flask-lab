@@ -16,6 +16,7 @@ COPY pyproject.toml uv.lock ./
 ENV VIRTUAL_ENV=/venv
 # Install dependencies in a separate layer (cached when lock file unchanged)
 RUN uv venv /venv && uv sync --frozen --no-install-project --no-dev
+RUN cp -rv /venv /deps-venv
 
 # Copy source code (changes frequently)
 COPY . ./
@@ -27,6 +28,9 @@ RUN uv build --wheel && uv pip install dist/*.whl
 # Runtime stage
 FROM dhi.io/python:3.14.2-alpine3.22-dev@sha256:76554f88f167cc7a78791938173b7803824bf2b25df754f9b5a49fd082dbd309
 
+# This might look a little magical, but it will ensure that the files from deps-venv (created above)
+# ends up in a separate layer, only updating it when needed.
+COPY --from=builder /deps-venv /venv
 COPY --from=builder /venv /venv
 
 USER nonroot
