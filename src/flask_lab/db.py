@@ -29,6 +29,8 @@ def get_rds_iam_token(rds_config: RdsConfig) -> str:
 
 def build_uri(config: Config) -> str:
     rds = config.database.rds
+    assert rds is not None, "rds config must be set when type is 'rds'"
+
     # Use hostname_override for connection URI if set, otherwise use host
     connection_host = rds.hostname_override or rds.host
 
@@ -37,10 +39,12 @@ def build_uri(config: Config) -> str:
 
 
 def setup_iam_token_refresh(engine: Engine, config: Config):
+    rds = config.database.rds
+    assert rds is not None, "rds config must be set when type is 'rds'"
     # noinspection PyUnusedLocal
     @event.listens_for(engine, "do_connect")
     def receive_do_connect(dialect, conn_rec, cargs, cparams):
-        token = get_rds_iam_token(config.database.rds)
+        token = get_rds_iam_token(rds)
         cparams['password'] = token
 
 
