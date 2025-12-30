@@ -47,6 +47,7 @@ class StandaloneApplication(gunicorn.app.base.BaseApplication):
 
     def load_config(self) -> None:
         for key, value in self.options.items():
+            # gunicorn guarantees cfg exists after super().__init__(), but type checker can't infer this
             self.cfg.set(key, value)  # type: ignore[union-attr]
 
     def load(self) -> Flask:
