@@ -24,7 +24,7 @@ def create_app() -> Flask:
 
     @app.route("/")
     def hello():
-        return {"message": "Hello from Flask!"}
+        return {"message": "Hello from Flask"}
 
     # Initialize TodoView with db dependency
     todo_view = TodoView(database)
