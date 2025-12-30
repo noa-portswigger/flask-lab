@@ -33,6 +33,7 @@ uri = "sqlite:////tmp/test.db"
         assert config is not None
         assert isinstance(config, Config)
         assert config.database.type == 'sqlite'
+        assert config.database.sqlite is not None
         assert config.database.sqlite.uri == 'sqlite:////tmp/test.db'
     finally:
         Path(config_path).unlink()
@@ -59,6 +60,7 @@ region = "us-west-2"
 
         assert config is not None
         assert config.database.type == 'rds'
+        assert config.database.rds is not None
         assert config.database.rds.host == 'test.rds.amazonaws.com'
         assert config.database.rds.port == 5432
         assert config.database.rds.name == 'testdb'
@@ -90,6 +92,7 @@ hostname_override = "localhost"
         config = load_config(config_path)
 
         assert config is not None
+        assert config.database.rds is not None
         assert config.database.rds.host == 'test.rds.amazonaws.com'
         assert config.database.rds.hostname_override == 'localhost'
     finally:
@@ -116,6 +119,7 @@ region = "us-east-1"
         config = load_config(config_path)
 
         assert config is not None
+        assert config.database.rds is not None
         assert config.database.rds.port == 5432
         assert config.database.rds.region == 'us-east-1'
         assert config.database.rds.hostname_override is None  # optional default

@@ -2,7 +2,6 @@
 # Copyright (c) 2025 flask-lab contributors
 
 import logging
-from typing import NoReturn
 
 import boto3
 from flask import Flask
@@ -13,10 +12,6 @@ from flask_lab.config import Config, RdsConfig
 from flask_lab.models import Base
 
 logger = logging.getLogger(__name__)
-
-
-def _unsupported_db_type(db_type: str) -> NoReturn:
-    """Raise an error for unsupported database types"""
 
 
 def get_rds_iam_token(rds_config: RdsConfig) -> str:
@@ -34,6 +29,7 @@ def get_rds_iam_token(rds_config: RdsConfig) -> str:
 
 def build_uri(config: Config) -> str:
     rds = config.database.rds
+    assert rds is not None, "rds config must be set when type is 'rds'"
     # Use hostname_override for connection URI if set, otherwise use host
     connection_host = rds.hostname_override or rds.host
 
@@ -43,6 +39,7 @@ def build_uri(config: Config) -> str:
 
 def setup_iam_token_refresh(engine, config: Config):
     rds = config.database.rds
+    assert rds is not None, "rds config must be set when type is 'rds'"
 
     @event.listens_for(engine, "do_connect")
     def receive_do_connect(dialect, conn_rec, cargs, cparams):
@@ -70,6 +67,7 @@ def _init_sqlalchemy(
 
 
 def init_sqlite(app: Flask, config: Config) -> SQLAlchemy:
+    assert config.database.sqlite is not None, "sqlite config must be set when type is 'sqlite'"
     return _init_sqlalchemy(app, config.database.sqlite.uri)
 
 
