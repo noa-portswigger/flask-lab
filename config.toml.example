@@ -17,5 +17,3 @@ port = 5432
 name = "your_database_name"
 user = "your_iam_db_username"
 region = "us-east-1"
-# Set to true to use IAM authentication, false for password-based auth
-use_iam_auth = true

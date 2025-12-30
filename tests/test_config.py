@@ -10,7 +10,7 @@ from flask_lab.config import Config, DatabaseConfig, RdsConfig, SqliteConfig, lo
 
 
 def test_load_config_missing_file():
-    """Test that load_config raises FileNotFoundError when config file doesn't exist"""
+    """Test that load_config raises FileNotFoundError when a config file doesn't exist"""
     with pytest.raises(FileNotFoundError, match="Config file not found"):
         load_config('/nonexistent/config.toml')
 
@@ -145,16 +145,16 @@ def test_config_dataclass_types():
 
 
 def test_load_config_invalid_type():
-    """Test that load_config raises error for invalid database type"""
+    """Test that load_config raises an error when the database type is invalid"""
     with tempfile.NamedTemporaryFile(mode='w', suffix='.toml', delete=False) as f:
         f.write("""
 [database]
-type = "mysql"
+type = "some_database_we_dont_support"
 """)
         config_path = f.name
 
     try:
-        with pytest.raises(ValueError, match="Invalid database type: 'mysql'"):
+        with pytest.raises(ValueError, match="Invalid database type: 'some_database_we_dont_support'"):
             load_config(config_path)
     finally:
         Path(config_path).unlink()
@@ -176,7 +176,7 @@ def test_load_config_missing_type():
 
 
 def test_load_config_rds_missing_required_fields():
-    """Test that load_config raises error when RDS required fields are missing"""
+    """Test that load_config raises an error when RDS required fields are missing"""
     with tempfile.NamedTemporaryFile(mode='w', suffix='.toml', delete=False) as f:
         f.write("""
 [database]

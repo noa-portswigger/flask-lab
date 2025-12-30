@@ -63,7 +63,7 @@ def load_config(config_path: str) -> Config:
         )
         rds_config = None
     else:
-        # Parse rds config - require fields when type is 'rds'
+        # Parse rds config - require fields when the type is 'rds'
         rds_data = db_data.get('rds', {})
         required_fields = ['host', 'port', 'name', 'user', 'region']
         missing_fields = [f for f in required_fields if f not in rds_data]

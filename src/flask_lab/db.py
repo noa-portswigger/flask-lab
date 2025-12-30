@@ -6,7 +6,7 @@ import logging
 import boto3
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import event
+from sqlalchemy import Engine, event
 
 from flask_lab.config import Config, RdsConfig
 from flask_lab.models import Base
@@ -29,7 +29,6 @@ def get_rds_iam_token(rds_config: RdsConfig) -> str:
 
 def build_uri(config: Config) -> str:
     rds = config.database.rds
-    assert rds is not None, "rds config must be set when type is 'rds'"
     # Use hostname_override for connection URI if set, otherwise use host
     connection_host = rds.hostname_override or rds.host
 
@@ -37,13 +36,11 @@ def build_uri(config: Config) -> str:
     return f"postgresql://{rds.user}@{connection_host}:{rds.port}/{rds.name}"
 
 
-def setup_iam_token_refresh(engine, config: Config):
-    rds = config.database.rds
-    assert rds is not None, "rds config must be set when type is 'rds'"
-
+def setup_iam_token_refresh(engine: Engine, config: Config):
+    # noinspection PyUnusedLocal
     @event.listens_for(engine, "do_connect")
     def receive_do_connect(dialect, conn_rec, cargs, cparams):
-        token = get_rds_iam_token(rds)
+        token = get_rds_iam_token(config.database.rds)
         cparams['password'] = token
 
 
@@ -90,5 +87,6 @@ def init_db(app: Flask, config: Config) -> SQLAlchemy:
             raise ValueError(f"Unsupported database type: '{config.database.type}'. Must be 'sqlite' or 'rds'")
 
     with app.app_context():
+        # noinspection PyUnboundLocalVariable
         db.create_all()
     return db

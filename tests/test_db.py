@@ -11,7 +11,7 @@ def test_build_uri_basic():
         host='test.rds.amazonaws.com',
         port=5432,
         name='testdb',
-        user='testuser',
+        user='test_user',
         region='us-west-2'
     )
     db_config = DatabaseConfig(type='rds', rds=rds_config, sqlite=SqliteConfig())
@@ -19,7 +19,7 @@ def test_build_uri_basic():
 
     uri = build_uri(config)
 
-    expected = 'postgresql://testuser@test.rds.amazonaws.com:5432/testdb'
+    expected = 'postgresql://test_user@test.rds.amazonaws.com:5432/testdb'
     assert uri == expected
 
 
@@ -29,7 +29,7 @@ def test_build_uri_with_hostname_override():
         host='test.rds.amazonaws.com',
         port=5432,
         name='testdb',
-        user='testuser',
+        user='test_user',
         region='us-west-2',
         hostname_override='localhost'
     )
@@ -39,12 +39,12 @@ def test_build_uri_with_hostname_override():
     uri = build_uri(config)
 
     # URI should use hostname_override for connection
-    expected = 'postgresql://testuser@localhost:5432/testdb'
+    expected = 'postgresql://test_user@localhost:5432/testdb'
     assert uri == expected
 
 
 def test_build_uri_with_custom_port():
-    """Test building RDS URI with custom port"""
+    """Test building RDS URI with a custom port"""
     rds_config = RdsConfig(
         host='test.rds.amazonaws.com',
         port=3306,
