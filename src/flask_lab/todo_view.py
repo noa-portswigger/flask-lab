@@ -1,8 +1,9 @@
 # SPDX-License-Identifier: MIT
 # Copyright (c) 2025 flask-lab contributors
 
-from flask import request, jsonify
+from flask import jsonify, request
 from sqlalchemy import select
+
 from flask_lab.models import Todo
 
 

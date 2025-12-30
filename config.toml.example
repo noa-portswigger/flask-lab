@@ -1,0 +1,21 @@
+# Database Configuration for flask-lab
+
+[database]
+# Database type: "sqlite" or "rds"
+type = "sqlite"
+
+# SQLite configuration (used when type = "sqlite")
+[database.sqlite]
+uri = "sqlite:////tmp/todo.db"
+
+# RDS configuration (used when type = "rds")
+[database.rds]
+host = "your-rds-endpoint.rds.amazonaws.com"
+# Optional: Override the hostname used in the connection URI (host is still used for IAM token generation)
+# hostname_override = "localhost"
+port = 5432
+name = "your_database_name"
+user = "your_iam_db_username"
+region = "us-east-1"
+# Set to true to use IAM authentication, false for password-based auth
+use_iam_auth = true

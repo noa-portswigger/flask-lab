@@ -1,30 +1,33 @@
 # SPDX-License-Identifier: MIT
 # Copyright (c) 2025 flask-lab contributors
 
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
+import logging
+import os
+
 import gunicorn.app.base
-from flask_lab.models import Base
+from flask import Flask
+
+from flask_lab import db
+from flask_lab.config import load_config
 from flask_lab.todo_view import TodoView
 
+logger = logging.getLogger(__name__)
 
-def create_app():
+
+def create_app() -> Flask:
     app = Flask(__name__)
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/todo.db'
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-    db = SQLAlchemy(model_class=Base)
-    db.init_app(app)
+    config_path = os.getenv('CONFIG_PATH', 'config.toml')
+    config = load_config(config_path)
 
-    with app.app_context():
-        db.create_all()
+    database = db.init_db(app, config)
 
     @app.route("/")
     def hello():
         return {"message": "Hello from Flask!"}
 
     # Initialize TodoView with db dependency
-    todo_view = TodoView(db)
+    todo_view = TodoView(database)
 
     # Register todo routes
     app.add_url_rule('/todos', view_func=todo_view.list_todos, methods=['GET'])
@@ -37,20 +40,35 @@ def create_app():
 
 
 class StandaloneApplication(gunicorn.app.base.BaseApplication):
-    def __init__(self, app, options=None):
+    def __init__(self, app: Flask, options: dict[str, str] | None = None) -> None:
         self.options = options or {}
         self.application = app
         super().__init__()
 
-    def load_config(self):
+    def load_config(self) -> None:
         for key, value in self.options.items():
             self.cfg.set(key, value)
 
-    def load(self):
+    def load(self) -> Flask:
         return self.application
 
+def setup_logging() -> None:
+    formatter = logging.Formatter(
+        '[%(asctime)s] [%(levelname)s] %(message)s',
+        datefmt='%Y-%m-%d %H:%M:%S %z'
+    )
 
-def main():
+    handler = logging.StreamHandler()
+    handler.setFormatter(formatter)
+
+    root_logger = logging.getLogger()
+    root_logger.addHandler(handler)
+    root_logger.setLevel(logging.INFO)
+
+
+def main() -> None:
+    setup_logging()
+    logger.info("Starting application")
     app = create_app()
     options = {
         'bind': '0.0.0.0:8080',
