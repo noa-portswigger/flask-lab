@@ -12,7 +12,7 @@ class Base(DeclarativeBase):
 
 
 class Todo(Base):
-    __tablename__ = 'todo'
+    __tablename__ = "todo"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     title: Mapped[str] = mapped_column(String(200), nullable=False)
@@ -21,8 +21,8 @@ class Todo(Base):
 
     def to_dict(self):
         return {
-            'id': self.id,
-            'title': self.title,
-            'completed': self.completed,
-            'created_at': self.created_at.isoformat()
+            "id": self.id,
+            "title": self.title,
+            "completed": self.completed,
+            "created_at": self.created_at.isoformat(),
         }

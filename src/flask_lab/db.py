@@ -15,13 +15,12 @@ logger = logging.getLogger(__name__)
 
 
 def get_rds_iam_token(rds_config: RdsConfig) -> str:
-    logger.info(f"Generating IAM token for user={rds_config.user} at {rds_config.host}:{rds_config.port} in region={rds_config.region}")
-    rds_client = boto3.client('rds', region_name=rds_config.region)
+    logger.info(
+        f"Generating IAM token for user={rds_config.user} at {rds_config.host}:{rds_config.port} in region={rds_config.region}"
+    )
+    rds_client = boto3.client("rds", region_name=rds_config.region)
     token = rds_client.generate_db_auth_token(
-        DBHostname=rds_config.host,
-        Port=rds_config.port,
-        DBUsername=rds_config.user,
-        Region=rds_config.region
+        DBHostname=rds_config.host, Port=rds_config.port, DBUsername=rds_config.user, Region=rds_config.region
     )
     logger.debug(f"IAM token generated successfully for {rds_config.user}@{rds_config.host}")
     return token
@@ -41,11 +40,12 @@ def build_uri(config: Config) -> str:
 def setup_iam_token_refresh(engine: Engine, config: Config):
     rds = config.database.rds
     assert rds is not None, "rds config must be set when type is 'rds'"
+
     # noinspection PyUnusedLocal
     @event.listens_for(engine, "do_connect")
     def receive_do_connect(dialect, conn_rec, cargs, cparams):
         token = get_rds_iam_token(rds)
-        cparams['password'] = token
+        cparams["password"] = token
 
 
 def _init_sqlalchemy(
@@ -53,14 +53,14 @@ def _init_sqlalchemy(
     db_uri: str,
 ) -> SQLAlchemy:
     """Common SQLAlchemy initialization logic"""
-    app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config["SQLALCHEMY_DATABASE_URI"] = db_uri
+    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
     engine_options = {
-        'pool_pre_ping': True,
-        'pool_recycle': 900,
+        "pool_pre_ping": True,
+        "pool_recycle": 900,
     }
-    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = engine_options
+    app.config["SQLALCHEMY_ENGINE_OPTIONS"] = engine_options
 
     db = SQLAlchemy(model_class=Base)
     db.init_app(app)
@@ -83,9 +83,9 @@ def init_rds(app: Flask, config: Config) -> SQLAlchemy:
 def init_db(app: Flask, config: Config) -> SQLAlchemy:
     """Initialize a database based on a configuration type"""
     match config.database.type:
-        case 'sqlite':
+        case "sqlite":
             db = init_sqlite(app, config)
-        case 'rds':
+        case "rds":
             db = init_rds(app, config)
         case _:
             raise ValueError(f"Unsupported database type: '{config.database.type}'. Must be 'sqlite' or 'rds'")

@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 def create_app() -> Flask:
     app = Flask(__name__)
 
-    config_path = os.getenv('CONFIG_PATH', 'config.toml')
+    config_path = os.getenv("CONFIG_PATH", "config.toml")
     config = load_config(config_path)
 
     database = db.init_db(app, config)
@@ -31,11 +31,11 @@ def create_app() -> Flask:
     todo_view = TodoView(database)
 
     # Register todo routes
-    app.add_url_rule('/todos', view_func=todo_view.list_todos, methods=['GET'])
-    app.add_url_rule('/todos/<int:todo_id>', view_func=todo_view.get_todo, methods=['GET'])
-    app.add_url_rule('/todos', view_func=todo_view.create_todo, methods=['POST'])
-    app.add_url_rule('/todos/<int:todo_id>', view_func=todo_view.update_todo, methods=['PUT'])
-    app.add_url_rule('/todos/<int:todo_id>', view_func=todo_view.delete_todo, methods=['DELETE'])
+    app.add_url_rule("/todos", view_func=todo_view.list_todos, methods=["GET"])
+    app.add_url_rule("/todos/<int:todo_id>", view_func=todo_view.get_todo, methods=["GET"])
+    app.add_url_rule("/todos", view_func=todo_view.create_todo, methods=["POST"])
+    app.add_url_rule("/todos/<int:todo_id>", view_func=todo_view.update_todo, methods=["PUT"])
+    app.add_url_rule("/todos/<int:todo_id>", view_func=todo_view.delete_todo, methods=["DELETE"])
 
     return app
 
@@ -54,11 +54,9 @@ class StandaloneApplication(gunicorn.app.base.BaseApplication):
     def load(self) -> Flask:
         return self.application
 
+
 def setup_logging() -> None:
-    formatter = logging.Formatter(
-        '[%(asctime)s] [%(levelname)s] %(message)s',
-        datefmt='%Y-%m-%d %H:%M:%S %z'
-    )
+    formatter = logging.Formatter("[%(asctime)s] [%(levelname)s] %(message)s", datefmt="%Y-%m-%d %H:%M:%S %z")
 
     handler = logging.StreamHandler()
     handler.setFormatter(formatter)
@@ -73,13 +71,13 @@ def main() -> None:
     logger.info("Starting application")
     app = create_app()
     options = {
-        'bind': '0.0.0.0:8080',
-        'workers': 4,
-        'accesslog': '-',
-        'errorlog': '-',
+        "bind": "0.0.0.0:8080",
+        "workers": 4,
+        "accesslog": "-",
+        "errorlog": "-",
     }
     StandaloneApplication(app, options).run()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
