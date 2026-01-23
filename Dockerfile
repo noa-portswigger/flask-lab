@@ -2,7 +2,7 @@
 # Copyright (c) 2025 flask-lab contributors
 
 # Build stage
-FROM dhi.io/python:3.14.2-alpine3.23-dev AS builder
+FROM dhi.io/alpine-base:3.23-dev AS builder
 
 # Install uv
 COPY --from=astral/uv:0.9.18-python3.12-alpine /usr/local/bin/uv /usr/local/bin/uv
@@ -24,7 +24,7 @@ ENV VIRTUAL_ENV=/venv
 RUN uv venv /venv && uv pip install --no-deps dist/*.whl
 
 # Runtime stage
-FROM dhi.io/python:3.14.2-alpine3.23-dev
+FROM dhi.io/alpine-base:3.23
 
 # This might look a little magical, but it will ensure that the files from deps-venv (created above)
 # ends up in a separate layer, only updating it when needed.
