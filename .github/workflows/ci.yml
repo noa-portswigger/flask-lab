@@ -31,7 +31,7 @@ jobs:
       - name: Run tests
         run: uv run pytest -v
 
-      - name: Login to docker.io for buildx access
+      - name: Login for docker scout access
         uses: docker/login-action@v3
         with:
           username: portswigger
@@ -46,23 +46,15 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-        with:
-          driver: cloud
-          endpoint: portswigger/shared-platform
 
-      - name: Build and push
+      - name: Build
         uses: docker/build-push-action@v6
         with:
-          tags: portswigger/noa-scout-test:pr-latest
-          outputs: type=registry
-          provenance: true
-          sbom: true
-          push: true
+          tags: temporary-pr-tag:latest
           load: true
-          attests: type=provenance,mode=max
 
       - name: Docker Scout
         uses: docker/scout-action@v1
         with:
           command: cves
-          image: portswigger/noa-scout-test:pr-latest
+          image: local://temporary-pr-tag:latest
