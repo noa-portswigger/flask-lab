@@ -12,6 +12,11 @@ dependencies = [
     "psycopg2-binary>=2.9.0",
 ]
 
+[build-system]
+requires = ["uv_build"]
+build-backend = "uv_build"
+
+
 [project.scripts]
 flask-lab = "flask_lab.app:main"
 
