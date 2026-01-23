@@ -8,73 +8,59 @@ from flask_lab.db import build_uri
 def test_build_uri_basic():
     """Test building basic RDS URI"""
     rds_config = RdsConfig(
-        host='test.rds.amazonaws.com',
-        port=5432,
-        name='testdb',
-        user='test_user',
-        region='us-west-2'
+        host="test.rds.amazonaws.com", port=5432, name="testdb", user="test_user", region="us-west-2"
     )
-    db_config = DatabaseConfig(type='rds', rds=rds_config, sqlite=SqliteConfig())
+    db_config = DatabaseConfig(type="rds", rds=rds_config, sqlite=SqliteConfig())
     config = Config(database=db_config)
 
     uri = build_uri(config)
 
-    expected = 'postgresql://test_user@test.rds.amazonaws.com:5432/testdb'
+    expected = "postgresql://test_user@test.rds.amazonaws.com:5432/testdb"
     assert uri == expected
 
 
 def test_build_uri_with_hostname_override():
     """Test building RDS URI with hostname override"""
     rds_config = RdsConfig(
-        host='test.rds.amazonaws.com',
+        host="test.rds.amazonaws.com",
         port=5432,
-        name='testdb',
-        user='test_user',
-        region='us-west-2',
-        hostname_override='localhost'
+        name="testdb",
+        user="test_user",
+        region="us-west-2",
+        hostname_override="localhost",
     )
-    db_config = DatabaseConfig(type='rds', rds=rds_config, sqlite=SqliteConfig())
+    db_config = DatabaseConfig(type="rds", rds=rds_config, sqlite=SqliteConfig())
     config = Config(database=db_config)
 
     uri = build_uri(config)
 
     # URI should use hostname_override for connection
-    expected = 'postgresql://test_user@localhost:5432/testdb'
+    expected = "postgresql://test_user@localhost:5432/testdb"
     assert uri == expected
 
 
 def test_build_uri_with_custom_port():
     """Test building RDS URI with a custom port"""
-    rds_config = RdsConfig(
-        host='test.rds.amazonaws.com',
-        port=3306,
-        name='testdb',
-        user='testuser',
-        region='us-east-1'
-    )
-    db_config = DatabaseConfig(type='rds', rds=rds_config, sqlite=SqliteConfig())
+    rds_config = RdsConfig(host="test.rds.amazonaws.com", port=3306, name="testdb", user="testuser", region="us-east-1")
+    db_config = DatabaseConfig(type="rds", rds=rds_config, sqlite=SqliteConfig())
     config = Config(database=db_config)
 
     uri = build_uri(config)
 
-    expected = 'postgresql://testuser@test.rds.amazonaws.com:3306/testdb'
+    expected = "postgresql://testuser@test.rds.amazonaws.com:3306/testdb"
     assert uri == expected
 
 
 def test_build_uri_different_regions():
     """Test building RDS URI for different regions"""
-    for region in ['us-east-1', 'eu-west-1', 'ap-southeast-1']:
+    for region in ["us-east-1", "eu-west-1", "ap-southeast-1"]:
         rds_config = RdsConfig(
-            host=f'test.{region}.rds.amazonaws.com',
-            port=5432,
-            name='testdb',
-            user='testuser',
-            region=region
+            host=f"test.{region}.rds.amazonaws.com", port=5432, name="testdb", user="testuser", region=region
         )
-        db_config = DatabaseConfig(type='rds', rds=rds_config, sqlite=SqliteConfig())
+        db_config = DatabaseConfig(type="rds", rds=rds_config, sqlite=SqliteConfig())
         config = Config(database=db_config)
 
         uri = build_uri(config)
 
-        expected = f'postgresql://testuser@test.{region}.rds.amazonaws.com:5432/testdb'
+        expected = f"postgresql://testuser@test.{region}.rds.amazonaws.com:5432/testdb"
         assert uri == expected

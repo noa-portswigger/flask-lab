@@ -12,12 +12,12 @@ from flask_lab.config import Config, DatabaseConfig, RdsConfig, SqliteConfig, lo
 def test_load_config_missing_file():
     """Test that load_config raises FileNotFoundError when a config file doesn't exist"""
     with pytest.raises(FileNotFoundError, match="Config file not found"):
-        load_config('/nonexistent/config.toml')
+        load_config("/nonexistent/config.toml")
 
 
 def test_load_config_sqlite_default():
     """Test loading a minimal SQLite configuration"""
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.toml', delete=False) as f:
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".toml", delete=False) as f:
         f.write("""
 [database]
 type = "sqlite"
@@ -32,16 +32,16 @@ uri = "sqlite:////tmp/test.db"
 
         assert config is not None
         assert isinstance(config, Config)
-        assert config.database.type == 'sqlite'
+        assert config.database.type == "sqlite"
         assert config.database.sqlite is not None
-        assert config.database.sqlite.uri == 'sqlite:////tmp/test.db'
+        assert config.database.sqlite.uri == "sqlite:////tmp/test.db"
     finally:
         Path(config_path).unlink()
 
 
 def test_load_config_rds_with_iam():
     """Test loading RDS configuration"""
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.toml', delete=False) as f:
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".toml", delete=False) as f:
         f.write("""
 [database]
 type = "rds"
@@ -59,13 +59,13 @@ region = "us-west-2"
         config = load_config(config_path)
 
         assert config is not None
-        assert config.database.type == 'rds'
+        assert config.database.type == "rds"
         assert config.database.rds is not None
-        assert config.database.rds.host == 'test.rds.amazonaws.com'
+        assert config.database.rds.host == "test.rds.amazonaws.com"
         assert config.database.rds.port == 5432
-        assert config.database.rds.name == 'testdb'
-        assert config.database.rds.user == 'testuser'
-        assert config.database.rds.region == 'us-west-2'
+        assert config.database.rds.name == "testdb"
+        assert config.database.rds.user == "testuser"
+        assert config.database.rds.region == "us-west-2"
         assert config.database.rds.hostname_override is None
     finally:
         Path(config_path).unlink()
@@ -73,7 +73,7 @@ region = "us-west-2"
 
 def test_load_config_rds_with_hostname_override():
     """Test loading RDS configuration with hostname override"""
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.toml', delete=False) as f:
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".toml", delete=False) as f:
         f.write("""
 [database]
 type = "rds"
@@ -93,15 +93,15 @@ hostname_override = "localhost"
 
         assert config is not None
         assert config.database.rds is not None
-        assert config.database.rds.host == 'test.rds.amazonaws.com'
-        assert config.database.rds.hostname_override == 'localhost'
+        assert config.database.rds.host == "test.rds.amazonaws.com"
+        assert config.database.rds.hostname_override == "localhost"
     finally:
         Path(config_path).unlink()
 
 
 def test_load_config_rds_defaults():
     """Test that RDS config uses default values for optional fields"""
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.toml', delete=False) as f:
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".toml", delete=False) as f:
         f.write("""
 [database]
 type = "rds"
@@ -121,7 +121,7 @@ region = "us-east-1"
         assert config is not None
         assert config.database.rds is not None
         assert config.database.rds.port == 5432
-        assert config.database.rds.region == 'us-east-1'
+        assert config.database.rds.region == "us-east-1"
         assert config.database.rds.hostname_override is None  # optional default
     finally:
         Path(config_path).unlink()
@@ -130,23 +130,17 @@ region = "us-east-1"
 def test_config_dataclass_types():
     """Test that config objects have correct types"""
     sqlite_config = SqliteConfig()
-    rds_config = RdsConfig(
-        host='test.com',
-        port=5432,
-        name='testdb',
-        user='testuser',
-        region='us-east-1'
-    )
-    db_config = DatabaseConfig(type='sqlite', sqlite=sqlite_config, rds=rds_config)
+    rds_config = RdsConfig(host="test.com", port=5432, name="testdb", user="testuser", region="us-east-1")
+    db_config = DatabaseConfig(type="sqlite", sqlite=sqlite_config, rds=rds_config)
     config = Config(database=db_config)
     assert isinstance(config.database.sqlite, SqliteConfig)
     assert isinstance(config.database.rds, RdsConfig)
-    assert config.database.type == 'sqlite'
+    assert config.database.type == "sqlite"
 
 
 def test_load_config_invalid_type():
     """Test that load_config raises an error when the database type is invalid"""
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.toml', delete=False) as f:
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".toml", delete=False) as f:
         f.write("""
 [database]
 type = "some_database_we_dont_support"
@@ -162,7 +156,7 @@ type = "some_database_we_dont_support"
 
 def test_load_config_missing_type():
     """Test that load_config raises error when type is missing"""
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.toml', delete=False) as f:
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".toml", delete=False) as f:
         f.write("""
 [database]
 """)
@@ -177,7 +171,7 @@ def test_load_config_missing_type():
 
 def test_load_config_rds_missing_required_fields():
     """Test that load_config raises an error when RDS required fields are missing"""
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.toml', delete=False) as f:
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".toml", delete=False) as f:
         f.write("""
 [database]
 type = "rds"

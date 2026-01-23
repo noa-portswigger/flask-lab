@@ -21,13 +21,10 @@ class TodoView:
 
     def create_todo(self):
         data = request.get_json()
-        if not data or 'title' not in data:
-            return jsonify({'error': 'Title is required'}), 400
+        if not data or "title" not in data:
+            return jsonify({"error": "Title is required"}), 400
 
-        todo = Todo(
-            title=data['title'],
-            completed=data.get('completed', False)
-        )
+        todo = Todo(title=data["title"], completed=data.get("completed", False))
         self.db.session.add(todo)
         self.db.session.commit()
         return jsonify(todo.to_dict()), 201
@@ -36,10 +33,10 @@ class TodoView:
         todo = self.db.get_or_404(Todo, todo_id)
         data = request.get_json()
 
-        if 'title' in data:
-            todo.title = data['title']
-        if 'completed' in data:
-            todo.completed = data['completed']
+        if "title" in data:
+            todo.title = data["title"]
+        if "completed" in data:
+            todo.completed = data["completed"]
 
         self.db.session.commit()
         return jsonify(todo.to_dict())
@@ -48,4 +45,4 @@ class TodoView:
         todo = self.db.get_or_404(Todo, todo_id)
         self.db.session.delete(todo)
         self.db.session.commit()
-        return '', 204
+        return "", 204
