@@ -5,7 +5,7 @@ on:
     branches: ["*"]
 
 jobs:
-  lint-and-test:
+  build-and-test:
     runs-on: ubuntu-24.04
 
     permissions:
@@ -19,7 +19,7 @@ jobs:
         with:
           version: "0.9.26"
 
-      - name: Run ruff lint
+      - name: Run ruff format
         run: uv run ruff format --check
 
       - name: Run ruff lint

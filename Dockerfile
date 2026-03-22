@@ -13,7 +13,7 @@ WORKDIR /build
 COPY pyproject.toml uv.lock ./
 # Interestingly, uv build and uv install will look at VIRTUAL_ENV but not uv venv
 ENV VIRTUAL_ENV=/deps-venv
-# Since we are using the python version that uv pulls,
+# Since we are using the python version that uv pulls, saving some space
 ENV UV_PYTHON_INSTALL_DIR=/python
 # Install dependencies in a separate layer (cached when lock file unchanged)
 RUN uv venv /deps-venv && uv sync --frozen --no-install-project --no-dev --active
